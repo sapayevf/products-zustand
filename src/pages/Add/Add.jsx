@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useProductStore } from "../../store/store";
+import { v4 as uuidv4 } from "uuid";
 import "./Add.scss";
 
 const Add = () => {
@@ -28,11 +29,15 @@ const Add = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newProduct = { ...product, id: crypto.randomUUID() }; 
-    console.log("Qo‘shilayotgan mahsulot:", newProduct);
+    const newProduct = { id: Date.now(), ...product };
+  
+    console.log("Yangi mahsulot:", newProduct); // 👉 Qo‘shishdan oldin tekshiramiz
+    
     addToHome(newProduct);
     setProduct({ name: "", description: "", price: "" });
   };
+  
+
   const handleEdit = (index) => {
     setProduct({ ...productList[index], id: productList[index].id });
     setEditIndex(index);

@@ -8,11 +8,7 @@ const Home = () => {
   const products = useProductStore((state) => state.products);
   const removeProduct = useProductStore((state) => state.removeProduct);
 
-  useEffect(() => {
-    console.log("Mahsulotlar yuklandi:", products);
-  }, [products]);
-
-  const items = products.filter((item) => item !== null);
+  const items = products.filter((item) => item !== null && item !== undefined);
 
   const handleLike = (id) => {
     setLikedItems((prev) => ({
@@ -26,11 +22,15 @@ const Home = () => {
     removeProduct(id);
   };
 
+  useEffect(() => {
+    console.log("Mahsulotlar ro‘yxati:", products); // 👉 Home sahifasida tekshiramiz
+  }, [products]);
+
   return (
     <div className="container list">
       {items.length === 0 ? <p>Mahsulotlar mavjud emas</p> : null}
       {items.map((item) =>
-        item?.id ? ( 
+        item?.id ? (
           <div key={item.id} className="product-card">
             <FaHeart
               size={20}

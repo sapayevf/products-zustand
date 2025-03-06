@@ -5,15 +5,20 @@ export const useProductStore = create(
   persist(
     (set, get) => ({
       products: [],
-      addProduct: (product) => {
-        console.log("Storega qo‘shilayotgan mahsulot:", product);
-        set((state) => ({ products: [...state.products, product] }));
-      },
-      removeProduct: (id) => {
-        console.log("Storedan o‘chirilayotgan ID:", id);
-        const updatedProducts = get().products.filter((item) => item.id !== id);
-        set({ products: updatedProducts });
-      },
+      addProduct: (product) =>
+        set((state) => {
+          if (!product || !product.id) return state;
+
+          console.log("Qo‘shilayotgan mahsulot:", product);
+          return { products: [...state.products, product] };
+        }),
+      removeProduct: (id) =>
+        set((state) => {
+          console.log("O‘chirilayotgan mahsulot ID:", id);
+          return {
+            products: state.products.filter((item) => item && item.id !== id),
+          };
+        }),
     }),
     {
       name: "product-storage",
