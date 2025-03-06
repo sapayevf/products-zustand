@@ -6,6 +6,7 @@ export const useProductStore = create(
     (set) => ({
       products: [],
       likedProducts: [],
+      cart: [],
 
       addProduct: (product) =>
         set((state) => ({ products: [...state.products, product] })),
@@ -14,6 +15,7 @@ export const useProductStore = create(
         set((state) => ({
           products: state.products.filter((item) => item.id !== id),
           likedProducts: state.likedProducts.filter((item) => item.id !== id),
+          cart: state.cart.filter((item) => item.id !== id),
         })),
 
       editProduct: (id, updatedProduct) =>
@@ -34,6 +36,16 @@ export const useProductStore = create(
               : [...state.likedProducts, product],
           };
         }),
+
+      addToCart: (product) =>
+        set((state) => ({
+          cart: [...state.cart, product],
+        })),
+
+      removeFromCart: (id) =>
+        set((state) => ({
+          cart: state.cart.filter((item) => item.id !== id),
+        })),
     }),
     {
       name: "product-storage",
