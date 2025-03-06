@@ -4,28 +4,15 @@ import "./Home.scss";
 import { FaHeart } from "react-icons/fa";
 
 const Home = () => {
-  const [likedItems, setLikedItems] = useState({});
   const products = useProductStore((state) => state.products);
   const removeProduct = useProductStore((state) => state.removeProduct);
   const editProduct = useProductStore((state) => state.editProduct);
+  const toggleLike = useProductStore((state) => state.toggleLike);
+  const likedProducts = useProductStore((state) => state.likedProducts);
 
   useEffect(() => {
     console.log("Mahsulotlar yuklandi:", products);
   }, [products]);
-
-  const handleLike = (id) => {
-    setLikedItems((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  const handleEdit = (id) => {
-    const newName = prompt("Yangi nom kiriting:");
-    if (newName) {
-      editProduct(id, { name: newName });
-    }
-  };
 
   return (
     <div className="container list">
@@ -34,8 +21,12 @@ const Home = () => {
         <div key={item.id} className="product-card">
           <FaHeart
             size={20}
-            color={likedItems[item.id] ? "red" : "gray"}
-            onClick={() => handleLike(item.id)}
+            color={
+              likedProducts.some((liked) => liked.id === item.id)
+                ? "red"
+                : "gray"
+            }
+            onClick={() => toggleLike(item)}
           />
           <img
             src="https://media.licdn.com/dms/image/v2/C560BAQF0D48SFQ9TBQ/company-logo_200_200/company-logo_200_200/0/1636452995521/korzinkauz_logo?e=2147483647&v=beta&t=MzSGG5R-Bekqt8PabJFFeu-Qrm_0-zqQevuExmHBOXU"
