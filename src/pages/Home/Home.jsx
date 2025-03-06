@@ -7,8 +7,11 @@ const Home = () => {
   const [likedItems, setLikedItems] = useState({});
   const products = useProductStore((state) => state.products);
   const removeProduct = useProductStore((state) => state.removeProduct);
+  const editProduct = useProductStore((state) => state.editProduct);
 
-  const items = products.filter((item) => item !== null && item !== undefined);
+  useEffect(() => {
+    console.log("Mahsulotlar yuklandi:", products);
+  }, [products]);
 
   const handleLike = (id) => {
     setLikedItems((prev) => ({
@@ -17,43 +20,35 @@ const Home = () => {
     }));
   };
 
-  const handleDelete = (id) => {
-    console.log("O‘chirilayotgan ID:", id);
-    removeProduct(id);
+  const handleEdit = (id) => {
+    const newName = prompt("Yangi nom kiriting:");
+    if (newName) {
+      editProduct(id, { name: newName });
+    }
   };
-
-  useEffect(() => {
-    console.log("Mahsulotlar ro‘yxati:", products); // 👉 Home sahifasida tekshiramiz
-  }, [products]);
 
   return (
     <div className="container list">
-      {items.length === 0 ? <p>Mahsulotlar mavjud emas</p> : null}
-      {items.map((item) =>
-        item?.id ? (
-          <div key={item.id} className="product-card">
-            <FaHeart
-              size={20}
-              color={likedItems[item.id] ? "red" : "gray"}
-              onClick={() => handleLike(item.id)}
-            />
-            <img
-              src="https://media.licdn.com/dms/image/v2/C560BAQF0D48SFQ9TBQ/company-logo_200_200/company-logo_200_200/0/1636452995521/korzinkauz_logo?e=2147483647&v=beta&t=MzSGG5R-Bekqt8PabJFFeu-Qrm_0-zqQevuExmHBOXU"
-              alt=""
-            />
-            <h3>{item.name}</h3>
-            <p>{item.description}</p>
-            <p>{item.price} so'm</p>
+      {products.length === 0 ? <p>Mahsulotlar mavjud emas</p> : null}
+      {products.map((item) => (
+        <div key={item.id} className="product-card">
+          <FaHeart
+            size={20}
+            color={likedItems[item.id] ? "red" : "gray"}
+            onClick={() => handleLike(item.id)}
+          />
+          <img
+            src="https://media.licdn.com/dms/image/v2/C560BAQF0D48SFQ9TBQ/company-logo_200_200/company-logo_200_200/0/1636452995521/korzinkauz_logo?e=2147483647&v=beta&t=MzSGG5R-Bekqt8PabJFFeu-Qrm_0-zqQevuExmHBOXU"
+            alt=""
+          />
+          <h3>{item.name}</h3>
+          <p>{item.description}</p>
+          <p>{item.price} so'm</p>
+          <div className="btn-group">
             <button className="buy-btn">Sotib olish</button>
-            <button
-              className="delete-btn"
-              onClick={() => handleDelete(item.id)}
-            >
-              Oʻchirish
-            </button>
           </div>
-        ) : null
-      )}
+        </div>
+      ))}
     </div>
   );
 };

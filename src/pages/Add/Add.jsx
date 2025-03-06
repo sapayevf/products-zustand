@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useProductStore } from "../../store/store";
-import { v4 as uuidv4 } from "uuid";
 import "./Add.scss";
 
 const Add = () => {
@@ -9,19 +8,10 @@ const Add = () => {
     description: "",
     price: "",
   });
-
-  const [productList, setProductList] = useState(() => {
-    const savedProducts = localStorage.getItem("products");
-    return savedProducts ? JSON.parse(savedProducts) : [];
-  });
-
-  const [editIndex, setEditIndex] = useState(null);
-  const addToHome = useProductStore((state) => state.addProduct);
-  const removeFromHome = useProductStore((state) => state.removeProduct);
-
-  useEffect(() => {
-    localStorage.setItem("products", JSON.stringify(productList));
-  }, [productList]);
+  const products = useProductStore((state) => state.products);
+  const addProduct = useProductStore((state) => state.addProduct);
+  const removeProduct = useProductStore((state) => state.removeProduct);
+  const editProduct = useProductStore((state) => state.editProduct);
 
   const handleChange = (e) => {
     setProduct({ ...product, [e.target.name]: e.target.value });
@@ -29,30 +19,9 @@ const Add = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const newProduct = { id: Date.now(), ...product };
-  
-    console.log("Yangi mahsulot:", newProduct); // 👉 Qo‘shishdan oldin tekshiramiz
-    
-    addToHome(newProduct);
+    const newProduct = { ...product, id: Date.now() };
+    addProduct(newProduct);
     setProduct({ name: "", description: "", price: "" });
-  };
-  
-
-  const handleEdit = (index) => {
-    setProduct({ ...productList[index], id: productList[index].id });
-    setEditIndex(index);
-  };
-
-  const handleLike = (index) => {
-    const updatedList = [...productList];
-    updatedList[index].liked = !updatedList[index].liked;
-    setProductList(updatedList);
-  };
-
-  const handleDelete = (index) => {
-    const updatedList = productList.filter((_, i) => i !== index);
-    setProductList(updatedList);
-    removeFromHome(index);
   };
 
   return (
@@ -83,16 +52,12 @@ const Add = () => {
           onChange={handleChange}
           required
         />
-        <button type="submit">
-          {editIndex !== null ? "Yangilash" : "Qo'shish"}
-        </button>
+        <button type="submit">Qo'shish</button>
       </form>
+
       <div className="product-list">
-        {productList.map((item, index) => (
-          <div key={index} className="product-card">
-            <div className="like-icon" onClick={() => handleLike(index)}>
-              {item.liked ? "❤️" : "🤍"}
-            </div>
+        {products.map((item) => (
+          <div key={item.id} className="product-card">
             <img
               src="https://media.licdn.com/dms/image/v2/C560BAQF0D48SFQ9TBQ/company-logo_200_200/company-logo_200_200/0/1636452995521/korzinkauz_logo?e=2147483647&v=beta&t=MzSGG5R-Bekqt8PabJFFeu-Qrm_0-zqQevuExmHBOXU"
               alt=""
@@ -101,14 +66,19 @@ const Add = () => {
             <p>{item.description}</p>
             <p>{item.price} so'm</p>
             <div className="btn-group">
-              <button onClick={() => handleEdit(index)} className="edit-btn">
-                Edit
+              <button
+                className="edit-btn"
+                onClick={() =>
+                  editProduct(item.id, { name: prompt("Yangi nom kiriting:") })
+                }
+              >
+                Tahrirlash
               </button>
               <button
-                onClick={() => handleDelete(index)}
                 className="delete-btn"
+                onClick={() => removeProduct(item.id)}
               >
-                Delete
+                Oʻchirish
               </button>
             </div>
           </div>
