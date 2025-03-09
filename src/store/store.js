@@ -3,12 +3,12 @@ import { persist } from "zustand/middleware";
 
 export const useProductStore = create(
   persist(
-    (set) => ({
-      user: null, 
+    (set, get) => ({
+      user: JSON.parse(localStorage.getItem("user")) || null,
+      isAuthenticated: localStorage.getItem("isAuthenticated") === "true",
       products: [],
       likedProducts: [],
       cart: [],
-      isAuthenticated: false,
 
       addProduct: (product) =>
         set((state) => ({ products: [...state.products, product] })),
@@ -49,8 +49,30 @@ export const useProductStore = create(
           cart: state.cart.filter((item) => item.id !== id),
         })),
 
-      login: (userData) => set({ user: userData, isAuthenticated: true }),
-      logout: () => set({ user: null, isAuthenticated: false }),
+        login: (userData) => {
+          console.log("⏩ Login funksiyasi chaqirildi:", userData);
+        
+          if (!userData) {
+            console.warn("⚠️ Login funksiyasiga noto‘g‘ri ma'lumot keldi.");
+            return;
+          }
+        
+          localStorage.setItem("user", JSON.stringify(userData));
+          localStorage.setItem("isAuthenticated", "true");
+        
+          set({ user: userData, isAuthenticated: true });
+        
+          console.log("✅ Login muvaffaqiyatli bajarildi:", userData);
+        },
+        
+
+      logout: () => {
+        console.log("🔴 Logout funksiyasi chaqirildi.");
+        localStorage.removeItem("user");
+        localStorage.removeItem("isAuthenticated");
+        set({ user: null, isAuthenticated: false });
+        console.log("✅ Logout bajarildi.");
+      },
     }),
     {
       name: "product-storage",

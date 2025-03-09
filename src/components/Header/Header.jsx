@@ -1,13 +1,21 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./Header.scss";
 import { useProductStore } from "../../store/store";
 
 const Header = () => {
-  const { user, isAuthenticated, logout } = useProductStore((state) => ({
-    user: state.user,
-    isAuthenticated: state.isAuthenticated,
-    logout: state.logout,
-  }));
+  const user = useProductStore((state) => state.user);
+  const isAuthenticated = useProductStore((state) => state.isAuthenticated);
+  const logout = useProductStore((state) => state.logout);
+  const navigate = useNavigate();
+
+  console.log("🟢 Header render bo‘ldi.");
+  console.log("🔹 isAuthenticated:", isAuthenticated);
+  console.log("🔹 User:", user);
+
+  const handleLogOut = () => {
+    navigate("/login");
+    logout();
+  };
 
   return (
     <header className="container header">
@@ -31,7 +39,7 @@ const Header = () => {
             <NavLink className="link" to="/profile">
               Profile
             </NavLink>
-            <button className="link" onClick={logout}>
+            <button className="link" onClick={handleLogOut}>
               Logout
             </button>
           </>

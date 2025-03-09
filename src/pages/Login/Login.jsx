@@ -12,20 +12,25 @@ const Login = () => {
 
   const handleLogin = async () => {
     try {
+      console.log("🔵 Login bosildi");
+
       const res = await axios.post("https://dummyjson.com/auth/login", {
         username,
         password,
       });
 
-      console.log("Login response:", res.data); 
+      console.log("📥 API Response:", res.data);
 
       localStorage.setItem("accessToken", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data)); 
-      login(res.data); 
+      localStorage.setItem("user", JSON.stringify(res.data));
+
+      login(res.data); // ✅ Foydalanuvchini Zustand'ga yuboramiz
+
+      console.log("✅ Foydalanuvchi Zustand'ga saqlandi:", res.data);
 
       navigate("/");
     } catch (error) {
-      console.error("Login xatosi:", error);
+      console.error("❌ Login xatosi:", error);
       alert("Login yoki parol noto‘g‘ri!");
     }
   };
@@ -33,19 +38,24 @@ const Login = () => {
   return (
     <div className="container login">
       <h2>Login</h2>
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <button onClick={handleLogin}>Login</button>
+      <form>
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </form>{" "}
+      <br />
+      <button className="login-btn" onClick={handleLogin}>
+        Login
+      </button>
     </div>
   );
 };

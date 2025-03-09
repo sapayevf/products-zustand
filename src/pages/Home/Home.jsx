@@ -11,9 +11,6 @@ const Home = () => {
   const likedProducts = useProductStore((state) => state.likedProducts);
   const addToCart = useProductStore((state) => state.addToCart);
 
-  useEffect(() => {
-    console.log("Mahsulotlar yuklandi:", products);
-  }, [products]);
 
   const handleBuy = (item) => {
     addToCart(item);
